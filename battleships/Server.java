@@ -21,12 +21,11 @@ public class Server {
     Board b;
 
     boolean gameover = false;
-    
 
     // constructor with port
-    Server(int port){
+    Server(int port) {
         // starts server and waits for a connection
-        try{
+        try {
             server = new ServerSocket(port);
             System.out.println("Server started on port " + port);
             System.out.println("Waiting for a player...");
@@ -44,96 +43,99 @@ public class Server {
 
             System.out.println("\nServer's board set!");
 
-            inputFromClient = new DataInputStream( 
-                new BufferedInputStream(socket.getInputStream()));
+            inputFromClient = new DataInputStream(new BufferedInputStream(socket.getInputStream()));
 
-            inputToClient = new BufferedReader(
-                new InputStreamReader(System.in));
-                
+            inputToClient = new BufferedReader(new InputStreamReader(System.in));
+
             outToClient = new DataOutputStream(socket.getOutputStream());
-            
+
             // reads message from client until game over
             boolean over = false;
-            while(!gameover){ // add gameover logic
+            while (!gameover) { // add gameover logic
                 clientTurn();
-                if(!gameover) myTurn();
+                if (!gameover)
+                    myTurn();
             }
-            //System.out.println("Game over! And the winner is... ");
+            // System.out.println("Game over! And the winner is... ");
 
             // closing connection
             socket.close();
             inputFromClient.close();
             inputToClient.close();
             outToClient.close();
-        } catch (IOException i){
+        } catch (IOException i) {
             System.out.println("Exception caught - " + i);
         }
     }
 
-    public void myTurn(){ // shoots at client, receives miss/hit
-        if(hit == false){
+    public void myTurn() { // shoots at client, receives miss/hit
+        if (hit == false) {
             row = random.nextInt(10);
             col = random.nextInt(10);
             String result = "";
             String shot = b.get_pos(row, col);
-            try{
+            try {
                 System.out.println("Shooting at " + shot);
                 outToClient.writeUTF(shot);
                 result = inputFromClient.readUTF();
                 System.out.println("It's a " + result);
-                if(result.equals("Hit")){
+                if (result.equals("Hit")) {
                     hit = true;
                     o = random.nextInt(2);
                 }
-            } catch (IOException e){
-                
+            } catch (IOException e) {
+
             }
-        } else if (hit == true){
-            if(--c == 0) hit = false;
-            if(o == 0){
-                if(col + 1 < 10){
+        } else if (hit == true) {
+            if (--c == 0)
+                hit = false;
+            if (o == 0) {
+                if (col + 1 < 10) {
                     col++;
-                } else col--;
+                } else
+                    col--;
             } else {
-                if(row + 1 < 10){
+                if (row + 1 < 10) {
                     row++;
-                } else row--;
+                } else
+                    row--;
             }
             String result = "";
             String shot = b.get_pos(row, col);
-            try{
+            try {
                 System.out.println("Shooting at " + shot);
                 outToClient.writeUTF(shot);
                 result = inputFromClient.readUTF();
-                if(result.equals("gg")){
+                if (result.equals("gg")) {
                     gameover = true;
                     System.out.println("You win");
                 }
                 System.out.println("It's a " + result);
-            } catch (IOException e){
-                
+            } catch (IOException e) {
+
             }
         }
-        
+
     }
 
-    public void clientTurn(){ // get shot, send client response
-        try{
+    public void clientTurn() { // get shot, send client response
+        try {
             String shot = inputFromClient.readUTF();
             String result = b.check_hit(shot) ? "Hit" : "Miss";
             System.out.println("Shot at " + shot + " and it's a " + result);
-            if(b.check_gameover()){
+            if (b.check_gameover()) {
                 gameover = true;
                 System.out.println("You lost");
                 outToClient.writeUTF("gg");
-            } else outToClient.writeUTF(result);
-        } catch (IOException i){
+            } else
+                outToClient.writeUTF(result);
+        } catch (IOException i) {
 
         }
     }
 
-    public static void main(String args[]){
-        if(args.length != 1){
+    public static void main(String args[]) {
+        if (args.length != 1) {
             System.out.println("Usage: java Server <port>");
             return;
         }
