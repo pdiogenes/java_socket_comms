@@ -11,7 +11,8 @@ Run the server with:
 `
 java Server <port>
 `
-Then run the client app with?
+
+Then run the client app with:
 `
 java Client <ip_address> <port>
 `
