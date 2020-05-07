@@ -85,11 +85,19 @@ public class Client {
     }
 
     public void myTurn() { // read shot, send to server, get result
-        System.out.println("Type where you want to shoot [e.g: A0]");
+        String shot = "";
         try {
-            String shot = inputToServer.readLine();
-            System.out.println("Shooting at " + shot);
-            outputToServer.writeUTF(shot);
+            do{
+                System.out.println("Type where you want to shoot [e.g: A0] or type 'p' to show your board");
+                shot = inputToServer.readLine();
+                if(shot.equals("p")){
+                    b.print_board();
+                } else{
+                    System.out.println("Shooting at " + shot);
+                    outputToServer.writeUTF(shot);
+                }
+                
+            } while (shot.equals("p"));
         } catch (IOException i) {
 
         }

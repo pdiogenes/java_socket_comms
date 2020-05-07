@@ -100,7 +100,8 @@ public class Board {
         for (int i = 0; i < 10; i++) {
             System.out.print(positions[i] + " ");
             for (int j = 0; j < 10; j++) {
-                System.out.print(board[i][j] + " ");
+                if(board[i][j] == -1 ) System.out.print("x ");
+                else System.out.print(board[i][j] + " ");
             }
             System.out.print("\n");
         }
