@@ -9,19 +9,18 @@ public class Client {
     public DatagramPacket sendPacket = null;
     public DatagramPacket receivPacket = null;
 
-    Client(InetAddress ip, int port) throws IOException, SocketException{
+    Client(InetAddress ip, int port) throws IOException, SocketException {
         this.ip = ip;
         this.port = port;
         this.clientSocket = new DatagramSocket();
         this.run();
     }
 
-    void run() throws IOException, SocketException{
+    void run() throws IOException, SocketException {
         // create the clients socket
         DatagramSocket clientSocket = new DatagramSocket();
-        BufferedReader clientRead = 
-            new BufferedReader(new InputStreamReader(System.in));
-        while(true){ // run until told otherwise
+        BufferedReader clientRead = new BufferedReader(new InputStreamReader(System.in));
+        while (true) { // run until told otherwise
 
             // create buffers to send and receive messages
             byte[] sendBuffer = new byte[65535];
@@ -37,26 +36,23 @@ public class Client {
             String clientData = clientRead.readLine();
             sendBuffer = clientData.getBytes();
 
-            DatagramPacket sendPacket = 
-                new DatagramPacket(sendBuffer, sendBuffer.length, this.ip, this.port);
-            
-            
-            try{
+            DatagramPacket sendPacket = new DatagramPacket(sendBuffer, sendBuffer.length, this.ip, this.port);
+
+            try {
                 clientSocket.send(sendPacket);
-            } catch(IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
             // receiving data
 
-            DatagramPacket receivePacket = 
-                new DatagramPacket(receiveBuffer, receiveBuffer.length);
+            DatagramPacket receivePacket = new DatagramPacket(receiveBuffer, receiveBuffer.length);
 
             clientSocket.receive(receivePacket);
             String serverData = new String(receivePacket.getData());
             System.out.println("\nServer says: " + serverData + "\n");
 
-            if(clientData.equalsIgnoreCase("bye")){
+            if (clientData.equalsIgnoreCase("bye")) {
                 break;
             }
 
@@ -65,24 +61,23 @@ public class Client {
         clientSocket.close();
     }
 
-    public static void main(String[] args)  throws IOException{
-        
+    public static void main(String[] args) throws IOException {
+
         // checks for correct usage
-        if(args.length != 2){
+        if (args.length != 2) {
             System.out.println("Usage: java Client <ip_address> <port>");
             return;
         }
 
         InetAddress ip = null;
 
-        try{
+        try {
             ip = InetAddress.getByName(args[0]);
-        } catch (UnknownHostException e){
+        } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        
-        int port = Integer.parseInt(args[1]);
 
+        int port = Integer.parseInt(args[1]);
 
         Client client = new Client(ip, port);
     }
